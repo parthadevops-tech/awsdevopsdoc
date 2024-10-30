@@ -1,0 +1,102 @@
+1. First Login to AWS console
+2. Create Keypair. like::-- vprofile-bean-key
+3. create security group for backend service::--
+   a. name:- vprofile-backend-SG, Description:-- vprofile-backend-SG
+   b. dummy inbound rule:- Type: custom, Protocol:-TCP, Port:- 22, source:- My IP
+   c. then overrule dummy inbound rule with:- Type:- All traffic, protocol:All, source:custom and in search
+      box give its own security group.
+
+4. Create RDS Database service:--
+   a. Go to rds > Select RDS
+   b. First create subnetgroup > click subnetgroup > hit create Db subnet group > give name and select
+      default VPC from drop down 
+   c. then add subnet with select all the availability zone then hit create
+   d. parameter group > hit create parameter group > select MySQL 8.0 from dropdown > groupname:- abc
+      hit create.
+   e. After that go to databases > create database > select MySQL > engine v from dropdown 8.0.32
+      Templates > Free tier > single Db instance > settings > give RDS name like::- vprofile-rds-mysql
+      username:- admin > select auto generate password
+      Instance configuration > select Burstable classes > db.t3.micro
+   f. Storage::- general purpose from dropdown
+      I)  Allocate storage:- 20
+      ii) public access:- tick No
+      iii) VPC security group:-- select vprofile-backend-sg from drop down
+      iv) Availibility zone:-- No preference 
+       v) Aadditional setting:- keep port 3306
+      vi) Monitoring > Enable enhance monitoring check, granularity select 60 second
+   g. Additional Configuration::--
+      I) Db Options > initial DB name > accounts
+      ii) parameter group:-- select earlier created parameter group from drop down
+      iii) Enable automated backups checkbox selected.
+      iv) Backup retention period:-- 7 days
+       v) Log exports check all the option
+      vi) Maintenance checkbox on
+      vii) hit create database
+      viii) click view credential details > copy the password for the database and keep it notepad.
+
+5. Amazon ElastiCache::--
+   a. go to subnet group > hit create subnet group
+      I) give name like::-- vprofile-memcache-sub-group, description:- vprofile-memcache-sub-group
+      ii) Select default VPC > click create
+   b. go to parameter group> hit create parameter group
+      i)  give it name like:- vprofile-memcache-para-group, description:- vprofile-memcache-para-group
+      ii) Family:- select memcache1.6 from drop down > click create
+   c. Go to Elasticache Dashboard > create memcache cluster
+      i) select aws cloud
+      ii) cluster name:- vprofile-elasticache-svc, des:- vprofile-elasticache-svc
+      iii) cluster settings > 1.6, port:- 11211
+      iv) parameter group created parameter group from dropdown
+      v) Node type::--select cache.t2.micro from drop down
+      vi) subnet grp:-- auto generated created subnet grp from drop down
+      vii) Availibility zone:- No preferences hit next
+      viii) securitygrp:- click on manage > select vprofile backend security group > hit choose
+       ix) hit next and the hit create
+
+6. Amazon Mq::--
+   a. Go to Amazone MQ > click > hit get started
+      i) Select broker engine > select Rabbit MQ > hit next
+      ii) select deployment mode > single instance broker > hit next
+      iii) configuration settings::--
+           a. Details > Broker name- xyz, instance type:- mq.t2.micro from drop down
+           b. Rabbit MQ access:- username:- rabbit, password:-Bue567
+           c. additional settings:-- network security private access
+           d. security group: vprofile backend security group > next
+           e. review details and create broker
+           f. go to RDS database > click database > copy the end point rds db keep it in note pad
+
+7. DB initialization::--
+   a. Go to EC2 instance with ubuntu > name- mysql-client
+      i) create security group >name:- mysql-client-sg, des:- mysql-client-sg
+      ii) type: ssh protocol:tcp, port:22, source: My IP > hit launce instance
+
+8. BEANSTALK::
+   a. go to beanstalk in aws console > ElasticBeanstalk
+      Beanstalk is a readymade platform to upload artifacts in aws
+   b. hit create beanstalk > Environment tier > select Web server environment
+      i)  application name:- vprofile-app
+      ii) Environment info::-- env name:- Vprofile-app-dev
+      iii) Domain name:-- vprofileapp after that hit check availability button
+   c. Platform:--
+      i) platform > select tomcat from drop down
+      ii) platform branch:- Tomcat 8.5 with corretto 11 selected
+      iii)Application code : sample application or upload your code section choose what ever
+      iv) presets::-- select single instance or custom configuration hit next
+       v)service access:-- service role > create and use new service role > by default selected role
+      vi)EC2 instance profile > vprofile-bean-role from drop down
+      vii) EC2 keypair > select keypair which was earlier created from drop down hit next
+      viii) vpc > default vpc from dropdown
+        ix) instance settings > public IP address > activated selected
+        x) subnet zones > select all the available zones > hit next
+    d. Configure instance traffic and scalling::--
+       i) instances:- root volume > root volume type:--container default, skip security group
+       ii) Capacity > Auto scaling group > Environment type > Load Balance from drop down
+       iii) instance type > t3.micro from drop down
+        iv) scaling triggers > metric > networkout from drop down
+        v) Load balancer network zones:- select all zones type:- Application Load balancer
+	vi) Listner:-  port 80, then hit next
+    e. Configure health monitering
+       i) health monitering > Checked Enhanced
+       ii) Rolling Updates and deployment::--
+           a.Deployment policy, batch size > Percentage > 10% > hit next
+       iii) Review all the setting > hit submit to launch
+      

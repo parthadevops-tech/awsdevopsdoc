@@ -1,0 +1,81 @@
+EC2 GITBASH COMMAND AFTER SEETING UP EC2 INSTANCES::--- Like::-- ssh -i Downloads/health-prod-web-nvir.pem ubuntu@34.200.124.136 then hit enter
+
+aws configuration store path::-- ls ~/.aws/
+
+To see the files::-- cat ~/.aws/config and  cat ~/.aws/credentials
+
+to check the user identity run the command like::-- aws sts get-caller-identity
+
+to check the ec2 instances run command like::-- aws ec2 describe-instances
+
+LINUX COMMAND FOR PARTION, MOUNT, FORMAT ARE LIKE::--
+####################################################################
+
+to show the list of disks::---- fdisk -l, this is ebs volume disk::--  Disk /dev/xvdf: 5 GiB, 5368709120 bytes, 10485760 sectors
+
+To do the partition ::-- fdisk /dev/xvdf hit enter it will give you instruction side by side  to check the partition created hit p then in the screen  comes up like::- 
+Device     Boot Start      End  Sectors Size Id Type
+/dev/xvdf1       2048 10485759 10483712   5G 83 Linux
+
+then hit w to write
+ then hit the below command
+To do the format ::-- write mkfs and then hit tab two times, then do mkfs.ext4 /dev/xvdf1 and hit enter.
+
+#############################################################################
+To mount the hard disk for temporary ::-- 
+##############################################################################
+first got to images folder which need to be mount like:-- cd /var/www/html/
+ create directory like mkdir /tmp/img-bakups
+move all the images from command like mv images/* /tmp/img-bakups
+
+now for mount for temporary::-- mount /dev/xvdf1 /var/www/html/images/
+To check the mounting ::-- df -h command
+
+To unmount the command is ::-- umount  /var/www/html/images/
+
+#################################################################################
+
+#############################################################################
+To mount the hard disk for permanently ::-- 
+##############################################################################
+first edit /etc/fstab ::-- vi /etc/fstab and put this line /dev/xvdf1      /var/www/html/images    ext4 defaults   0 0
+
+to test the mount command::-- mount -a
+to check the mounting command::-- df -h 
+
+time to move our images data /tmp/img-bakups to /var/www/html/images/ ::-- mv /tmp/img-bakups/* /var/www/html/images/
+to restart the services::-- systemctl restart httpd
+
+
+###############################################################################################
+			AWS ELASTIC LOAD BALANCER(ELB)
+###############################################################################################
+
+
+
+
+
+###############################################################################################
+			AWS ELASTIC FILE SYSTEM(EFS)
+###############################################################################################
+
+1. Search By EFS and click on EFS
+2. First create security group, while creating in inbound rule set nfs rule and then custom setting use running webserver security group.
+3. Go to EFS > create file system > give name say > wedding-web-img then click customize
+4. to Aceess to access point click accesspoint > create access point > 
+5. mounting file system to install Amazon EFS client for Linux like ::-- sudo yum install -y amazon-efs-utils
+6. mounting with access point like::-- fs-06239d1e9ca23a541 efs-mount-point efs _netdev,tls,accesspoint=fsap-01f2006ef5b9a0f70 0 0
+7. before mount get backup:-- make directory like mkdir /tmp/img-backup then move images from /var/www/html/images
+8. mv images/*  /tmp/img-backup
+9. open fstab file like::-- vi /etc/fstab
+10. to mount do ::-- mount -fav
+11. bring back data from /tmp/img-backup to /var/www/html/images
+12 To create EFS AMI > go to EC2 > Instances > Action > image & Templates > create Image
+
+
+###############################################################################################
+			AWS S3 services
+###############################################################################################
+
+1.To make the object public do ::-- Bucket permission section then edit Block public access and uncheck checkbox.
+2. select object and from object action drop down select Make public with ACL.

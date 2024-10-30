@@ -1,0 +1,29 @@
+
+how to check the status of Docker::-- systemctl status docker
+verify docker is install and running correctly::--sudo docker run hello-world
+
+how to check available images::-- docker images
+
+To show the running containers in docker::-- docker ps
+To show  all the containers in docker::-- docker ps -a
+
+to run another images in port like::-- docker run --name web01 -d -p 9080:80, here -d means running in the background, here 9080 is the host port and port 80 is container port
+
+To access the docker internally::-- docker inspect web01
+To access webpage internally::-- curl http://172.17.0.2:80
+Docker build command::-- docker build -t tesimg . then hit enter
+DOCKER RUN COMMAND TO run ::--docker run -d -P tesimg
+
+STOP RUNNING DOCKER::-- docker stop web01 nervous_knuth sad_gagarin
+REMOVE ALL THE Container::-- docker rm web01 nervous_knuth sad_gagarin
+REMOVE images::-- docker rmi REMOVE images forcefully::-- docker rmi -f image id
+
+TO RUN MULTIPLE CONTAINER TOGATHER THE COMMAND IS::-- docker compose up -d
+
+if file is not there then do vim file name like::-- vim docker-compose.yml and paste the content in this file
+TO check compose file::-- docker compose ps
+TO DOWN THE DOCKER COMPOSE :: docker compose down
+TO REMOVE ALL THE START CONTAINER ::-- docker system prune -a
+
+TO STOP THE RUNNING CONTAINER OR IMAGES LIKE::--  docker container stop CONTAINER ID  
+NPM ::----legacy-peer-deps

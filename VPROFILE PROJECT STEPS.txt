@@ -1,0 +1,32 @@
+ARCHITECTURE OF PROJECT SERVICES
+
+1.NGINX
+2.TOMCAT
+3.RABBITMQ
+4.MEMCACHED
+5.MYSQL
+
+
+ARCHITECTURE OF PROJECT AUTOMATED SET UP::--
+
+1. ORACLE VM TOOLBOX
+2. GIT BASH
+3. VAGRANT
+
+First git clone https://github.com/devopshydclub/vprofile-project.git in a folder and git checkout to main branch of this git repository.
+
+then go to vagrant folder ---> vagrant\Manual_provisioning_WinMacIntel then run this command vagrant plugin install vagrant-hostmanager
+
+and then vagrant up
+
+then logon one by one like vagrant ssh db01
+ then look into the hosts file by hit the command:: like cat /etc/hosts
+to check the connection do ::-- ping web01 -c 4 
+
+set up Dbs and cache in order like::
+1. MySQL(Database)
+2. Memcache(DB Caching SVC)
+3. RabbitMQ (Broker/ Que SVC)
+4. Tomcat (Application SVC)
+5. Nginx  (Web SVC)
+

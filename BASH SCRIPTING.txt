@@ -1,0 +1,439 @@
+1. To create first bashscript create directory name opt like::-- mkdir /opt/scripts --> cd /opt/scripts
+    bash scripting first line should be shepbank character like #! that tells the interpreter what interpreter is this like #!/bin/bash
+
+command echo for print something like::-- 
+## FIRST SCRIPT
+#######################################################
+
+#!/bin/bash
+#####Application information for first script ##############
+echo "######################################################"
+echo
+echo "Welcome to Bash script."
+echo
+
+echo "######################################################"
+echo
+echo "The Uptime of the system is: "
+uptime
+
+echo "######################################################"
+echo
+echo "Memory Utilisation::--"
+free -m
+echo "######################################################"
+echo
+echo "Disk Utilisation "
+df -h
+echo "######################################################"
+echo
+
+
+########################################################
+in order to run the script you have to given the path relative or absolute:: relative path like ./firstscript.sh, relative path like ::-- /opt/scripts/firstscript.sh
+
+to check the permission of the file the command is::-- ls -l, to give the executable permission to be chmod +x firstscript.sh
+
+
+## SAMPLE SCRIPT FOR SETTING SIMPLE WEBSITES THRU BASH SCRIPT
+#############################################################
+
+#!/bin/bash
+
+## Installing Dependencies
+echo "#############################################"
+echo "Installing packages."
+echo "#############################################"
+sudo yum install wget unzip httpd -y > /dev/null ###to move unnecessary content to /dev/null
+echo
+
+## Start & Enable Service
+echo "#############################################"
+echo "Start & Enable HTTPD Service"
+echo "#############################################"
+sudo systemctl start httpd
+sudo systemctl enable httpd
+echo
+
+## Creating Temp Directory
+echo "#############################################"
+echo "Start Artifact Deployment"
+echo "#############################################"
+mkdir -p /tmp/webfiles #####-p is if directory exists then doesn't throw error##
+cd /tmp/webfiles
+echo
+
+wget https://www.tooplate.com/zip-templates/2131_wedding_lite.zip > /dev/null
+unzip 2131_wedding_lite.zip > /dev/null ###to move unnecessary content to /dev/null
+sudo cp -r 2131_wedding_lite/* /var/www/html
+echo
+
+## Bounce Service
+echo "##############################################"
+echo "Restarting HTTPD service"
+systemctl restart httpd
+echo
+
+## Clean UP
+echo "#############################################"
+echo "Remove Temporary Files"
+echo "#############################################"
+rm -rf /tmp/webfiles
+echo
+
+systemctl status httpd
+ls /var/www/html
+
+########### END THE SCRIPT #########################
+
+
+
+## BASH SCRIPTING VARIABLES FOR SETTING SIMPLE WEBSITES
+#######################################################
+
+#!/bin/bash
+
+## Variables Declaration
+PACKAGE="httpd wget unzip"
+SVC=" httpd"
+URL="https://www.tooplate.com/zip-templates/2131_wedding_lite.zip"
+ART_NAME="2131_wedding_lite"
+TEMPDIR="/tmp/webfiles"
+
+## Installing Dependencies
+echo "#############################################"
+echo "Installing packages."
+echo "#############################################"
+sudo yum install $PACKAGE -y > /dev/null
+echo
+
+## Start & Enable Service
+echo "#############################################"
+echo "Start & Enable HTTPD Service"
+echo "#############################################"
+sudo systemctl start $SVC
+sudo systemctl enable $SVC
+echo
+
+## Creating Temp Directory
+echo "#############################################"
+echo "Start Artifact Deployment"
+echo "#############################################"
+mkdir -p $TEMPDIR #####-p is if directory exists then doesn't throw error##
+cd $TEMPDIR
+echo
+
+wget $URL > /dev/null
+unzip $ART_NAME.zip > /dev/null
+sudo cp -r $ART_NAME/* /var/www/html
+echo
+
+## Bounce Service
+echo "##############################################"
+echo "Restarting HTTPD service"
+systemctl restart $SVC
+echo
+
+## Clean UP
+echo "#############################################"
+echo "Remove Temporary Files"
+echo "#############################################"
+rm -rf $TEMPDIR
+echo
+
+systemctl status $SVC
+ls /var/www/html
+
+
+##################END HERE#############################
+
+
+## BASH SCRIPTING VARIABLES FOR SETTING SIMPLE WEBSITES FOR UBUNTU
+##################################################################
+
+#!/bin/bash
+
+## Variables Declaration
+
+UPDATEUBUNTU = "apt update"
+PACKAGE="apache2 wget unzip"
+SVC=" apache2"
+URL="https://www.tooplate.com/zip-templates/2137_barista_cafe.zip"
+ART_NAME="2137_barista_cafe"
+TEMPDIR="/tmp/webfiles"
+
+## Installing Dependencies
+echo "#############################################"
+echo "Installing packages."
+echo "#############################################"
+sudo apt install $PACKAGE -y > /dev/null
+echo
+
+## Start & Enable Service
+echo "#############################################"
+echo "Start & Enable HTTPD Service"
+echo "#############################################"
+sudo systemctl restart $SVC
+echo
+
+## Creating Temp Directory
+echo "#############################################"
+echo "Start Artifact Deployment"
+echo "#############################################"
+mkdir -p $TEMPDIR #####-p is if directory exists then doesn't throw error##
+cd $TEMPDIR
+echo
+
+wget $URL > /dev/null
+unzip $ART_NAME.zip > /dev/null
+sudo cp -r $ART_NAME/* /var/www/html
+echo
+
+## Bounce Service
+echo "##############################################"
+echo "Restarting HTTPD service"
+systemctl restart $SVC
+echo
+
+## Clean UP
+echo "#############################################"
+echo "Remove Temporary Files"
+echo "#############################################"
+rm -rf $TEMPDIR
+echo
+
+systemctl status $SVC
+ls /var/www/html
+
+
+##################END HERE#############################
+
+Rename the script file in bash script is like:::--- mv firstscript.sh 1_firstscript.sh
+
+
+##HOW TO REMOVE INSTALL SOFTWARE IN LINUX THRU BASH SCRIPT
+##########################################################
+#!/bin/bash
+sudo systemctl stop httpd
+sudo rm -rf /var/www/html
+sudo yum remove httpd wget unzip -y
+##########################################################
+
+
+#########################################################
+##COMMAND LINE ARGUMENTS
+##########################################################
+
+code::--
+#!/bin/bash
+
+echo "Value of 0 is:-"
+echo $0
+
+echo "Value of 1 is:-"
+echo $1
+
+echo "Value of 2 is:-"
+echo $2
+
+echo "Value of 3 is:-"
+echo $3
+
+
+################################################
+1. EXAMPLE ONE ::-- TO EXICUTE THE SCRIPT ./4_args.sh AWS JENKINS
+#################################################################
+Value of 0 is:-
+./4_args.sh
+Value of 1 is:-
+AWS
+Value of 2 is:-
+JENKINS
+Value of 3 is:-
+
+0 is reserve for the name of the script file name and number 1 to 9 store command line arguments
+
+EXAMPLE TWO::-- TO EXICUTE THE SCRIPT ./5_websitesetup.sh https://www.tooplate.com/zip-templates/2108_dashboard.zip 2108_dashboard
+##################################################################################################################################
+
+#!/bin/bash
+
+## Variables Declaration
+PACKAGE="httpd wget unzip"
+SVC=" httpd"
+#URL="https://www.tooplate.com/zip-templates/2131_wedding_lite.zip"
+#ART_NAME="2131_wedding_lite"
+TEMPDIR="/tmp/webfiles"
+
+## Installing Dependencies
+echo "#############################################"
+echo "Installing packages."
+echo "#############################################"
+sudo yum install $PACKAGE -y > /dev/null
+echo
+
+## Start & Enable Service
+echo "#############################################"
+echo "Start & Enable HTTPD Service"
+echo "#############################################"
+sudo systemctl start $SVC
+sudo systemctl enable $SVC
+echo
+
+## Creating Temp Directory
+echo "#############################################"
+echo "Start Artifact Deployment"
+echo "#############################################"
+mkdir -p $TEMPDIR #####-p is if directory exists then doesn't throw error##
+cd $TEMPDIR
+echo
+
+wget $1 > /dev/null              ### instead of using variable $URL use command line argument as $1 ## 
+unzip $2.zip > /dev/null           ### instead of using variable $ART_NAME use command line argument as $2 ##
+sudo cp -r $2/* /var/www/html        ### instead of using variable $ART_NAME use command line argument as $2 ##
+echo
+
+## Bounce Service
+echo "##############################################"
+echo "Restarting HTTPD service"
+systemctl restart $SVC
+echo
+
+## Clean UP
+echo "#############################################"
+echo "Remove Temporary Files"
+echo "#############################################"
+rm -rf $TEMPDIR
+echo
+
+systemctl status $SVC
+ls /var/www/html
+
+
+
+##COMMAND LINE ARGUMENTS ENDS HERE
+##########################################################
+
+##SYTEM VARIABLE
+##########################################################
+
+echo $? 0 means last execution was successful or other command is non zero means last execution was not successful.
+OTHER CUSTOM SYSTEM VARIABLE echo $USER echo $HOSTNAME echo $RANDOM
+
+##SYTEM VARIABLE ENDS HERE
+##########################################################
+
+##QUOTES
+##########################################################
+
+TWO TYPES OF QUOTES IN BASH DOUBLE QUOTES AND SINGLE QUOTES
+
+##QUOTES ENDS HERE
+##########################################################
+
+##COMMAND SUBSTITUTION
+##########################################################
+Command substitution takes command out put and store it in a variables with either `variable` or $(variable)
+
+Example::-- UP=`uptime` ### with backticks
+            echo $UP
+
+            CURRENT_USER=$(who) ### with parenthesis
+            echo $CURRENT_USER 
+Example::-- of free ram::--
+
+            free -m | grep Mem | awk '{print$4}'
+	    FREE_RAM=`free -m | grep Mem | awk '{print$4}'`
+	    echo "FREE RAM IS $FREE_RAM mb."
+
+Example::-- of system info
+##############################################################
+#!/bin/bash 
+
+echo "Welcome $USER on $HOSTNAME"
+echo "########################################################"
+
+FREERAM=$(free -m | grep Mem | awk '{print$4}' )  
+LOAD=`uptime | awk '{print $9}'`
+ROOTFREE=$(df -h | grep '/dev/sda1' | awk '{print $4}')
+
+
+echo "#########################################################"
+echo "Available free RAM is $FREERAM MB"
+echo "#########################################################"
+echo "CURRENT LOAD AVERAGE $LOAD"  
+echo "#########################################################"
+echo "FREE ROOT PARTITION SIZE IS $ROOTFREE"
+
+##COMMAND SUBSTITUTION ENDS HERE
+##########################################################
+
+
+##EXPORTING VARIABLES
+##########################################################
+
+exporting variables to save in respected root user .bashrc file with the setting of variables like export SEASON="MONSOON"
+if variable permanent for every one the /etc/profile, if variable permanent for user then root user the update .bashrc file of that particular root user.
+
+##EXPORTING VARIABLES ENDS HERE
+########################################################## 
+
+
+
+##USER INPUT
+##########################################################
+user interaction with read and then variable like::-- read val1, user wait to read value from variable
+
+#!/bin/bash
+
+echo "ENTER YOUR SKILL" 
+read SKILL
+
+echo "Your $SKILL is in high demand in the IT industry right now"
+
+read -p 'USERNAME: ' USR
+read -sp 'Password: ' pass
+
+echo
+
+echo "Login Successful:: Welcome USER $USR"
+
+##USER INPUT ENDS HERE
+##########################################################
+
+##DECISION MAKING PART ONE
+##########################################################
+
+#!/bin/bash
+
+read -p "Enter a number: " NUM
+echo
+
+if [ $NUM -gt 100 ]
+then
+  echo "We have entered in IF block. "
+  sleep 3
+  echo "Your Number is greater than 100"
+  echo
+  date
+ else
+  echo "You have entered number less than 100"
+fi
+
+echo "Script execution completed successfully"
+
+
+##DECISION MAKING PART ONE ENDS HERE
+##########################################################
+
+##REMOTE COMMAND EXECUTION
+##########################################################
+TO IP MAPPING one vm to other vm is like edit vim /etc/hosts and then add ip address like 192.168.56.13 web02
+                                                                                          192.168.56.14 web03
+                                                                                          192.168.56.15 web04
+
+How to connect one vm to another with ip like by standing in "scriptbox VM" to "VM web02" [root@scriptbox ~]# ssh vagrant@web02
+
+How to add another user instead vagrant in all the running webservice like::-- [root@webo2 ~]# useradd devops,set password like passwd devops ::-- devops1, devops2 for [root@webo3 ~]#
+How to edit sudos file::-- visudo
+In ubuntu start ssh::-- systemctl restart ssh

@@ -1,0 +1,58 @@
+r => read,
+w => write,
+x => execute
+
+- => filetype
+rw- => User
+--- => group
+--- => others
+
+. 1 root Groot 4450 Sep  8 06:37 anaconda-ks.cfg
+drwxr-xr-x. 2 root Groot   31 Sep  8 06:47 devopsdir
+-rw-------. 1 root Groot 1388 Jul  5 14:07 original-ks.cfg
+
+FILE PERMISSION IN LINUX::--
+
+check the permission of directory::-- ls -ld directory name like:- ls -ld /opt/devopsdir/
+
+how to change the ownership:--command is chown username:groupname like chown ansible:devops /opt/devopsdir/
+
+remove permission for other and write permission to the group: command is chmod o-x /opt/devopsdir/
+
+to remove the other read permission also like::- chmod o-r /opt/devopsdir/
+write permission for group:: like::-- chmod g+w /opt/devopsdir/
+how to navigate different root or user::- like::-- su - username::-- like::-- su - miles
+
+
+SUDO:::----
+
+
+Package Management::---
+
+ curl command to download any software from browser and set it to a file name like::--  curl https://rpmfind.net/linux/centos-stream/9-stream/BaseOS/x86_64/os/Packages/tree-1.8.0-10.el9.x86_64.rpm -o tree-1.8.0-10.el9.x86_64.rpm
+
+to install package::-- rpm -ivh --- printed in human readable mode path of the rmp like tree-1.8.0-10.el9.x86_64.rpm, like::-- rpm -ivh tree-1.8.0-10.el9.x86_64.rpm
+
+for list of rpm:-- rpm -qa, to check wheather any software or package install or not::-- rpm -qa | grep tree
+
+Download software or packages with yum command:: like::-- yum search httpd, to install software like::--  yum install httpd, to uninstall software in Linux::-- sudo yum remove httpd
+reinstall packages::-- yum reinstall
+update packages::-- yum update
+to group packages::-- yum grouplist
+all the enabled repository::-- yum repolist
+to clean cache ::-- yum clean all
+
+Services::----
+
+Manage service by command::-- systemctl command like::-- systemctl status httpd, start the service like::-- systemctl start httpd, for restart::-- systemctl restart httpd.
+
+Processes::----
+
+Dynamic process command::-- top, to quite::-- press q in keyboard
+
+Archive:::---
+
+to archive any file::--- tar -czvf jenkins_15092024.tar.gz Jenkins, to see what kind of file after archive:: file jenkins_15092024.tar.gz
+to unarchive any file::-- tar -xzvf anaconda_15092024.tar.gz
+
+ 
