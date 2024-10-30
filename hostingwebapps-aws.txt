@@ -1,0 +1,84 @@
+1. First Login into aws account
+2. Go to EC2 instance and create security group for instance
+3. first create security group for load Balancer
+    a. In security group create inbound rule with Type: Http protocol: TCP port:80 source:anywhere.
+4. Second create security group for tomcat server
+    a. In security group create inbound rule with Type: custom protocol: TCP port:8080 source:custom Loadbalancer security group.
+    b. add two more inbound rule 1. Type: custom protocol: TCP port:22 source:My IP.
+ 				 2. Type: custom protocol: TCP port:8080 source:My IP.
+
+5. Create keypair for ssh
+
+6. Now Launce EC2 Instance like name:-- app-server-tomcat OS:-- Ubuntu volume type free-tier
+   a. then select instance type t.micro free tier
+   b. then select keypair from dropdown
+   c. then select security group from down and it should be app server security group not loadbalancer security group
+   d. then go to advanced details section and in User data section paste bash script for tomcat server
+7. Then from gitbash do ssh -i Downloads/pem ubuntu@ 54.224.247.131 and login, then do sudo -i to root user and then do systemctl status tomcat10 to show wheather tomcat server is running or not.
+   a. then check home directory of tomcat /var/lib/tomcat10/
+
+
+##########################################################################################################################################################################################
+
+Time to build artifacts upload it to s3 bucket and from there fetch to the tomcat EC2 instances
+
+##########################################################################################################################################################################################
+
+1. open gitbash from vs code with Terminal:Select default profile:-GIT BASH terminal
+2. to push the artifact to s3 bucket need to be authenticate with AWS IAM user and role
+   a. in AWS console go to IAM service select IAM, create user with s3admin name then select attach policy and from dropdown select AmazonS3FullAccess then next and then hit create.
+   b. select s3admin user and click and then go to security_credentials then click create access keys from Access keys section, then select Command Line Interface (CLI), then next and then 
+      hit create then download csv file and the hit done.
+   c. configure awscli with the above created keys::-- in gitbash type aws configure and do step by step.
+
+3. Going to create s3 bucket from gitbash command line from VS CODE like::-- aws s3 mb s3://pccoder1710-angapp, to check goto aws console s3 bucket. 
+
+4. now upload or copy artifacts file or .war file from the same folder to s3 bucket::-- aws s3 cp standaloneApp/standalone-angular-app.war s3://pccoder1710-angapp to check go to s3 bucket.
+
+5. Create roll to download artifacts from s3 bucket to aws cli and tocat server
+   a. create role then select aws service, then select EC2 from dropdown 
+   b. then attach this role to appserver instance or sole instance like::- select action > security > Modify with IAM.
+
+6. Then again do ssh in instances like:: gitbash do ssh -i Downloads/pem ubuntu@ 54.224.247.131 and login
+   I) go to root like sudo -i, then apt update, then apt install awscli or sudo snap install aws-cli --classic.
+   II) do aws --version then do aws ls s3 to se associated roles from IAM with ec2 instances.
+   III) After that copy artifacts file from s3 bucket to /tmp/ folder of tomcat server::-- aws s3 cp s3://pccoder1710-angapp/standalone-angular-app.war /tmp/
+
+############################################################################################################################################################################################
+TIME TO DEPLOY THE ARTIFACTS
+############################################################################################################################################################################################
+
+1. first stop tomcat server:: systemctl stop tomcat10
+2. then remove default ROOT folder like::-- rm -rf /var/lib/tomcat10/webapps/ROOT
+3. then copy artifacts from /tmp/ folder to /var/lib/tomcat10/webapps/ROOT.war like::-- cp /tmp/standalone-angular-app.war /var/lib/tomcat10/webapps/ROOT.war
+4. then start tomcat10 service:- systemctl start tomcat10
+
+############################################################################################################################################################################################
+Time to set up Load Balancer & DNS
+############################################################################################################################################################################################
+
+1.First create target group::--
+  a. Hit create target group
+  b. Give name like standaloneang-app-TG
+  c. HTTP PORT:-- 8080
+  d. Health checks should be / as it is angular app
+  e. then hit next and click include as pending below, then click create target group
+2. second create Loadbalancer with application selected loadbalancer
+   a. name loadbalacer like::-- standaloneang-app-prod-elb select internetfacing select IPV4 then mappings select all the zones
+   b. select security group which was first created for ELB security group
+   c. in Listeners and routing section select HTTP port 80 Default action select created target group from drop down
+   d. in Listeners and routing section select HTTPs port 443 Default action select created target group from drop down
+   e. when select routing HTTPS then must be mention ACM which created earlier in our case should be pcawshkinfo.xyz
+
+3. take load balancer endpoint of DNS info like ::-- standaloneang-app-prod-elb-1323506563.us-east-1.elb.amazonaws.com
+4. go to godaddy.com and in DNS profile management section select CNMAE then add value in Name: like standaloneapp  add this in the value section standaloneang-app-prod-elb-1323506563.us-east-1.elb.amazonaws.com
+
+5. Lastly check in browser with : https://standaloneapp.pcawshkinfo.xyz and hit enter same as http://standaloneapp.pcawshkinfo.xyz
+
+####################################################################################################
+
+TO CREATE WAR FILE FOR ANGULAR APP
+
+#####################################################################################################
+
+jar -cvf standalone-angular-app.war * to remain same folder
