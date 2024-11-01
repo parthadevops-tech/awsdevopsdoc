@@ -1,0 +1,84 @@
+1. First start from either VM from local with Vagrantfile set up or doing with AWS EC2 instance AMI set up.
+
+2. After done the above setting do vagrant ssh in from local VM and then do vagrant ssh and sudo -i or if EC2 then do ssh -i Downloads/.pem key ubuntu@public if of EC2 instance.
+
+3. INSTALLATION PART:--
+  a. install sudo apt update
+             sudo apt install openjdk-17-jdk -y
+
+             sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+             https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+             echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
+             https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+             /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+             sudo apt-get update
+
+             sudo apt-get install Jenkins
+             sudo systemctl enable Jenkins
+	     sudo systemctl start Jenkins
+             sudo systemctl status Jenkins
+             
+             ##############################################################
+             APACHE2 SERVER
+             ##############################################################
+             sudo apt update
+             sudo apt-get install apache2 -y
+             sudo systemctl start apache2
+             sudo systemctl enable apache2
+             sudo systemctl status apache2
+
+             ##############################################################
+	     NODE AND ANGUALR VERSION
+             ##############################################################
+             first install npm apt update, sudo apt-get install npm -y
+                           sudo npm cache clean -f
+			   sudo npm install -g n
+			   sudo n stable
+			   sudo n 18.17.1
+                           sudo npm install -g @angular/cli
+    
+    b. configuration setting:-
+       i) for no-password prompt do sudo visudo from like root@ubuntu and add this line jenkins ALL=(ALL) NOPASSWD:ALL for save the file press ctrl + x then hit CAPS Y and then Enter.
+          after that run sudo systemctl daemon-reload and then this sudo systemctl restart Jenkins to take effect.
+       ii) in apache2 server first create standalone-app.conf with sudo vim /etc/apache2/sites-available/standalone-app.conf and add below line
+                                  <VirtualHost *:80>
+    				    	ServerAdmin webmaster@localhost
+    					DocumentRoot /var/www/html/standalone-app
+
+    					<Directory /var/www/html/standalone-app>
+        					Options Indexes FollowSymLinks
+        					AllowOverride All
+        					Require all granted
+    					</Directory>
+
+    					ErrorLog ${APACHE_LOG_DIR}/error.log
+    					CustomLog ${APACHE_LOG_DIR}/access.log combined
+				   </VirtualHost>
+         iii) then to Enable the new site configuration: give command this sudo a2ensite standalone-app.conf and then give sudo systemctl reload apache2
+         iv) Disable 000-default.conf:- sudo a2dissite 000-default.conf, sudo systemctl reload apache2
+         v) to check enable file do ls /etc/apache2
+         vi) add file name standalone-app in /var/www/html/ directory like :- mkdir standalone-app.
+
+    c.  to create public key to establish connection with GitHub do sudo to Jenkins like :-- sudo su - Jenkins then ssh-keygen -t rsa -b 4096 -C "jenkins@yourdomain.com"
+        then access the key with :-- cat ~/.ssh/id_rsa.pub 
+        copy the key and 
+        
+         1. Go to GitHub and open your repository.
+	 2. Navigate to Settings > Deploy Keys (or Settings > SSH and GPG keys for personal keys).
+	 3. Click Add Deploy Key.
+         4. Paste the copied public key in the Key field.
+	 5. Give it a Title (e.g., "Jenkins CI Key").
+	 6. Check the Allow write access box if your pipeline will push to the repository; otherwise, leave it unchecked.
+	 7. Click Add Key.
+	 8. to test the key do ssh -T git@github.com
+         9. create webhook from GitHub to notify changes from GitHub to Jenkins for build: add url which is <your Jenkins server>/github-webhook/ then hit add activate.
+
+4. JENKINS SETTINGS:--
+   i) first add build dependencies from plugins like node js and install
+   ii) configure node in Jenkins from Manage Jenkins > Tool or global tool.
+   iii) create jobs first as freestyle name freestyle project then select freestyle and hit ok
+    iv) give GitHub project url
+    v)  GitHub repo
+    vi) build step as execute shell script
+##################################################################################### FOR FREE STYLE SETUP #################################################################
