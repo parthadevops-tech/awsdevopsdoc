@@ -1,6 +1,6 @@
 1. First start from either VM from local with Vagrantfile set up or doing with AWS EC2 instance AMI set up.
 
-2. After done the above setting do vagrant ssh in from local VM and then do vagrant ssh and sudo -i or if EC2 then do ssh -i Downloads/.pem key ubuntu@public if of EC2 instance.
+2. After done the above setting do vagrant ssh in from local VM and then do vagrant ssh and sudo -i or if EC2 then do ssh -i Downloads/.pem key ubuntu@public ip of EC2 instance.
 
 3. INSTALLATION PART:--
   a. install sudo apt update
@@ -62,7 +62,7 @@
 
     c.  to create public key to establish connection with GitHub do sudo to Jenkins like :-- sudo su - Jenkins then ssh-keygen -t rsa -b 4096 -C "jenkins@yourdomain.com"
         then access the key with :-- cat ~/.ssh/id_rsa.pub 
-        copy the key and 
+        copy the key and copy it in local system
         
          1. Go to GitHub and open your repository.
 	 2. Navigate to Settings > Deploy Keys (or Settings > SSH and GPG keys for personal keys).
